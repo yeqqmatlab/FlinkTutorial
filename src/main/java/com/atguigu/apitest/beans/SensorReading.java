@@ -9,6 +9,8 @@ package com.atguigu.apitest.beans;
  * Created by wushengran on 2020/11/7 11:34
  */
 
+import java.io.Serializable;
+
 /**
  * @ClassName: SensorReading
  * @Description:
@@ -17,7 +19,7 @@ package com.atguigu.apitest.beans;
  */
 
 // 传感器温度读数的数据类型
-public class SensorReading {
+public class SensorReading implements Serializable {
     // 属性：id，时间戳，温度值
     private String id;
     private Long timestamp;
