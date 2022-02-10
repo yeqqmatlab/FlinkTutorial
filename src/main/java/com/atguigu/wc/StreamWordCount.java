@@ -52,8 +52,9 @@ public class StreamWordCount {
         DataStream<Tuple2<String, Integer>> resultStream = inputDataStream.flatMap(new WordCount.MyFlatMapper())
                 //.slotSharingGroup("green")
                 .keyBy(0)
-                .sum(1);
-                //.setParallelism(2).slotSharingGroup("red");
+                .sum(1)
+                //.slotSharingGroup("red")
+                .setParallelism(2);
 
         resultStream.print().setParallelism(1);
 
