@@ -34,6 +34,7 @@ public class FlinkSourceDemo {
 
         collection.print("data");
 
+        
         /**
          * 从文件中读取
          */
