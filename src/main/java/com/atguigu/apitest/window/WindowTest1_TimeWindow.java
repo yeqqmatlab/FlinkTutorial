@@ -42,15 +42,12 @@ public class WindowTest1_TimeWindow {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
 
-//        // 从文件读取数据
-//        DataStream<String> inputStream = env.readTextFile("D:\\Projects\\BigData\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
-
         // socket文本流
-        DataStream<String> inputStream = env.socketTextStream("localhost", 7777);
+        DataStream<String> inputStream = env.socketTextStream("192.168.1.248", 7777);
 
         // 转换成SensorReading类型
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
-            String[] fields = line.split(",");
+            String[] fields = line.split(" ");
             return new SensorReading(fields[0], new Long(fields[1]), new Double(fields[2]));
         });
 
@@ -61,7 +58,7 @@ public class WindowTest1_TimeWindow {
 //                .countWindow(10, 2);
 //                .window(EventTimeSessionWindows.withGap(Time.minutes(1)));
 //                .window(TumblingProcessingTimeWindows.of(Time.seconds(15)))
-                .timeWindow(Time.seconds(15))
+                .timeWindow(Time.seconds(5))
                 .aggregate(new AggregateFunction<SensorReading, Integer, Integer>() {
                     @Override
                     public Integer createAccumulator() {
@@ -86,7 +83,7 @@ public class WindowTest1_TimeWindow {
 
         // 2. 全窗口函数
         SingleOutputStreamOperator<Tuple3<String, Long, Integer>> resultStream2 = dataStream.keyBy("id")
-                .timeWindow(Time.seconds(15))
+                .timeWindow(Time.seconds(5))
 //                .process(new ProcessWindowFunction<SensorReading, Object, Tuple, TimeWindow>() {
 //                })
                 .apply(new WindowFunction<SensorReading, Tuple3<String, Long, Integer>, Tuple, TimeWindow>() {
@@ -111,9 +108,9 @@ public class WindowTest1_TimeWindow {
                 .sideOutputLateData(outputTag)
                 .sum("temperature");
 
-        sumStream.getSideOutput(outputTag).print("late");
+        //sumStream.getSideOutput(outputTag).print("late");
 
-        resultStream2.print();
+        sumStream.print("--->");
 
 
         env.execute();
