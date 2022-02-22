@@ -1,4 +1,5 @@
-package com.atguigu.apitest.window;/**
+package com.atguigu.apitest.window;
+/**
  * Copyright (c) 2018-2028 尚硅谷 All Rights Reserved
  * <p>
  * Project: FlinkTutorial
@@ -15,21 +16,14 @@ import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
-import org.apache.flink.streaming.api.windowing.assigners.EventTimeSessionWindows;
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * @ClassName: WindowTest1_TimeWindow
@@ -67,7 +61,7 @@ public class WindowTest1_TimeWindow {
 
                     @Override
                     public Integer add(SensorReading value, Integer accumulator) {
-                        return accumulator + 1;
+                        return accumulator + value.getTemperature().intValue();
                     }
 
                     @Override
@@ -80,6 +74,25 @@ public class WindowTest1_TimeWindow {
                         return a + b;
                     }
                 });
+
+
+//        resultStream.print();
+
+        DataStream<SensorReading> dataStreamSensorReading = dataStream.keyBy("id").countWindow(2).reduce(new ReduceFunction<SensorReading>() {
+            @Override
+            public SensorReading reduce(SensorReading t0, SensorReading t1) throws Exception {
+                SensorReading t3 = new SensorReading();
+                t3.setId(t0.getId() + t1.getId());
+                t3.setTimestamp(t0.getTimestamp() + t1.getTimestamp());
+                t3.setTemperature(t0.getTemperature() + t1.getTemperature());
+                return t3;
+            }
+        });
+
+        dataStreamSensorReading.print();
+
+
+
 
         // 2. 全窗口函数
         SingleOutputStreamOperator<Tuple3<String, Long, Integer>> resultStream2 = dataStream.keyBy("id")
@@ -110,7 +123,7 @@ public class WindowTest1_TimeWindow {
 
         //sumStream.getSideOutput(outputTag).print("late");
 
-        sumStream.print("--->");
+//        sumStream.print("--->");
 
 
         env.execute();
