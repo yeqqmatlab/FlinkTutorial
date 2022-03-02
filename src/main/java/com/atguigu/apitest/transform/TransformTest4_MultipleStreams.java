@@ -34,7 +34,7 @@ public class TransformTest4_MultipleStreams {
         env.setParallelism(1);
 
         // 从文件读取数据
-        DataStream<String> inputStream = env.readTextFile("D:\\Projects\\BigData\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
+        DataStream<String> inputStream = env.readTextFile("E:\\github\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
 
         // 转换成SensorReading
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
@@ -52,11 +52,11 @@ public class TransformTest4_MultipleStreams {
 
         DataStream<SensorReading> highTempStream = splitStream.select("high");
         DataStream<SensorReading> lowTempStream = splitStream.select("low");
-        DataStream<SensorReading> allTempStream = splitStream.select("high", "low");
+//        DataStream<SensorReading> allTempStream = splitStream.select("high", "low");
 
         highTempStream.print("high");
         lowTempStream.print("low");
-        allTempStream.print("all");
+//        allTempStream.print("all");
 
         // 2. 合流 connect，将高温流转换成二元组类型，与低温流连接合并之后，输出状态信息
         DataStream<Tuple2<String, Double>> warningStream = highTempStream.map(new MapFunction<SensorReading, Tuple2<String, Double>>() {
@@ -84,7 +84,7 @@ public class TransformTest4_MultipleStreams {
 
         // 3. union联合多条流
 //        warningStream.union(lowTempStream);
-        highTempStream.union(lowTempStream, allTempStream);
+//        highTempStream.union(lowTempStream, allTempStream);
 
         env.execute();
     }

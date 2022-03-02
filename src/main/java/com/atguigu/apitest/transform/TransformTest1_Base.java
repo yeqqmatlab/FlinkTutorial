@@ -27,7 +27,7 @@ public class TransformTest1_Base {
         env.setParallelism(1);
 
         // 从文件读取数据
-        DataStream<String> inputStream = env.readTextFile("D:\\Projects\\BigData\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
+        DataStream<String> inputStream = env.readTextFile("E:\\github\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
 
         // 1. map，把String转换成长度输出
         DataStream<Integer> mapStream = inputStream.map(new MapFunction<String, Integer>() {
@@ -57,8 +57,8 @@ public class TransformTest1_Base {
 
         // 打印输出
         mapStream.print("map");
-        flatMapStream.print("flatMap");
-        filterStream.print("filter");
+//        flatMapStream.print("flatMap");
+//        filterStream.print("filter");
 
         env.execute();
     }

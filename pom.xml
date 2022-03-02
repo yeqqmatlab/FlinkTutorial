@@ -96,12 +96,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${assembly.version}</version>
                 <configuration>
-<!--                    <archive>
-                        <manifest>
-                            <mainClass>com.zhixinhuixue.bd.Application</mainClass>
-                        </manifest>
-                    </archive>-->
-                    <!-- jar包名称后面不拼接jar-with-dependencies -->
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
