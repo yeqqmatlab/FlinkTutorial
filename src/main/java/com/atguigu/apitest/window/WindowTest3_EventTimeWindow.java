@@ -28,7 +28,9 @@ public class WindowTest3_EventTimeWindow {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 //        env.setParallelism(1);
+        //设置事件时间
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        //设置水位
         env.getConfig().setAutoWatermarkInterval(100);
 
         // socket文本流
@@ -60,12 +62,12 @@ public class WindowTest3_EventTimeWindow {
         // 基于事件时间的开窗聚合，统计15秒内温度的最小值
         SingleOutputStreamOperator<SensorReading> minTempStream = dataStream.keyBy("id")
                 .timeWindow(Time.seconds(15))
-                .allowedLateness(Time.minutes(1))
-                .sideOutputLateData(outputTag)
+                .allowedLateness(Time.minutes(1))  //应许延迟1分钟
+                .sideOutputLateData(outputTag)     //将迟到的数据放入侧输入流
                 .minBy("temperature");
 
         minTempStream.print("minTemp");
-        minTempStream.getSideOutput(outputTag).print("late");
+        minTempStream.getSideOutput(outputTag).print("late");  //打印迟到数据
 
         env.execute();
     }

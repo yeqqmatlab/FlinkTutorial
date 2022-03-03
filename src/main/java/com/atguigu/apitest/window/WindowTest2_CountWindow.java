@@ -17,6 +17,7 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /**
+ *  经典示例 体会
  * @ClassName: WindowTest2_CountWindow
  * @Description:
  * @Author: wushengran on 2020/11/9 16:19
@@ -31,17 +32,17 @@ public class WindowTest2_CountWindow {
 //        DataStream<String> inputStream = env.readTextFile("D:\\Projects\\BigData\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
 
         // socket文本流
-        DataStream<String> inputStream = env.socketTextStream("localhost", 7777);
+        DataStream<String> inputStream = env.socketTextStream("192.168.1.248", 7777);
 
         // 转换成SensorReading类型
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
-            String[] fields = line.split(",");
+            String[] fields = line.split(" ");
             return new SensorReading(fields[0], new Long(fields[1]), new Double(fields[2]));
         });
 
-        // 开计数窗口测试
+        // 开 计数窗口
         SingleOutputStreamOperator<Double> avgTempResultStream = dataStream.keyBy("id")
-                .countWindow(10, 2)
+                .countWindow(4, 1)
                 .aggregate(new MyAvgTemp());
 
         avgTempResultStream.print();
@@ -50,6 +51,11 @@ public class WindowTest2_CountWindow {
     }
 
     public static class MyAvgTemp implements AggregateFunction<SensorReading, Tuple2<Double, Integer>, Double>{
+
+        /**
+         * 累加器初始值
+         * @return
+         */
         @Override
         public Tuple2<Double, Integer> createAccumulator() {
             return new Tuple2<>(0.0, 0);
@@ -60,6 +66,11 @@ public class WindowTest2_CountWindow {
             return new Tuple2<>(accumulator.f0 + value.getTemperature(), accumulator.f1 + 1);
         }
 
+        /**
+         * 相邻四个温度的平均值
+         * @param accumulator
+         * @return
+         */
         @Override
         public Double getResult(Tuple2<Double, Integer> accumulator) {
             return accumulator.f0 / accumulator.f1;

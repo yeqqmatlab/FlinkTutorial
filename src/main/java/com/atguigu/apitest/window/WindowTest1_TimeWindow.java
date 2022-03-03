@@ -49,10 +49,9 @@ public class WindowTest1_TimeWindow {
 
         // 1. 增量聚合函数
         DataStream<Integer> resultStream = dataStream.keyBy("id")
-//                .countWindow(10, 2);
 //                .window(EventTimeSessionWindows.withGap(Time.minutes(1)));
 //                .window(TumblingProcessingTimeWindows.of(Time.seconds(15)))
-                .timeWindow(Time.seconds(5))
+                .timeWindow(Time.seconds(5))  //只有一个参数 滚动窗口
                 .aggregate(new AggregateFunction<SensorReading, Integer, Integer>() {
                     @Override
                     public Integer createAccumulator() {
@@ -91,9 +90,6 @@ public class WindowTest1_TimeWindow {
 
         dataStreamSensorReading.print();
 
-
-
-
         // 2. 全窗口函数
         SingleOutputStreamOperator<Tuple3<String, Long, Integer>> resultStream2 = dataStream.keyBy("id")
                 .timeWindow(Time.seconds(5))
@@ -115,10 +111,10 @@ public class WindowTest1_TimeWindow {
 
         SingleOutputStreamOperator<SensorReading> sumStream = dataStream.keyBy("id")
                 .timeWindow(Time.seconds(15))
-//                .trigger()
-//                .evictor()
-                .allowedLateness(Time.minutes(1))
-                .sideOutputLateData(outputTag)
+//                .trigger()  //触发器
+//                .evictor()  //移除器
+                .allowedLateness(Time.minutes(1))  //应许处理迟到数据
+                .sideOutputLateData(outputTag)    //将迟到的数据放入侧输入流
                 .sum("temperature");
 
         //sumStream.getSideOutput(outputTag).print("late");
