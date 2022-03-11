@@ -28,17 +28,19 @@ public class WindowTest3_EventTimeWindow {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 //        env.setParallelism(1);
-        //设置事件时间
+        /**
+         * 设置时间语义 : 事件时间
+         */
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
         //设置水位
         env.getConfig().setAutoWatermarkInterval(100);
 
         // socket文本流
-        DataStream<String> inputStream = env.socketTextStream("localhost", 7777);
+        DataStream<String> inputStream = env.socketTextStream("192.168.1.248", 7777);
 
         // 转换成SensorReading类型，分配时间戳和watermark
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
-            String[] fields = line.split(",");
+            String[] fields = line.split(" ");
             return new SensorReading(fields[0], new Long(fields[1]), new Double(fields[2]));
         })
                 // 升序数据设置事件时间和watermark
