@@ -30,7 +30,7 @@ import javax.xml.crypto.Data;
 public class TransformTest2_RollingAggregation {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(2);
+        env.setParallelism(1);
 
         // 从文件读取数据
         DataStream<String> inputStream = env.readTextFile("E:\\github\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
@@ -68,7 +68,7 @@ public class TransformTest2_RollingAggregation {
 
         //        KeyedStream<SensorReading, String> keyedStream1 = dataStream.keyBy(SensorReading::getId);
 
-        // 滚动聚合，取当前最大的温度值
+        // 滚动聚合，取当前key最大的温度值
         DataStream<SensorReading> resultStream = keyedStream1.maxBy("temperature");
 
         resultStream.print("result");

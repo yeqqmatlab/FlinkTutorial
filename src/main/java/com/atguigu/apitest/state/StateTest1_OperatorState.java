@@ -57,15 +57,20 @@ public class StateTest1_OperatorState {
             return count;
         }
 
+        //快照状态函数
         @Override
         public List<Integer> snapshotState(long checkpointId, long timestamp) throws Exception {
             return Collections.singletonList(count);
         }
 
+        //恢复状态函数
         @Override
         public void restoreState(List<Integer> state) throws Exception {
-            for( Integer num: state )
+            for( Integer num: state ) {
                 count += num;
+            }
         }
+
+
     }
 }

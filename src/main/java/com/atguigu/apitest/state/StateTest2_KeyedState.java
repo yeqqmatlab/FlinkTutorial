@@ -28,7 +28,7 @@ public class StateTest2_KeyedState {
         env.setParallelism(1);
 
         // socket文本流
-        DataStream<String> inputStream = env.socketTextStream("localhost", 7777);
+        DataStream<String> inputStream = env.socketTextStream("ip248", 7777);
 
         // 转换成SensorReading类型
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
@@ -73,9 +73,12 @@ public class StateTest2_KeyedState {
             }
             myListState.add("hello");
             // map state
-            myMapState.get("1");
+            myMapState.put("1",35.9);
             myMapState.put("2", 12.3);
             myMapState.remove("2");
+
+            Double aDouble = myMapState.get("1");
+            System.out.println("aDouble = " + aDouble);
             // reducing state
 //            myReducingState.add(value);
 

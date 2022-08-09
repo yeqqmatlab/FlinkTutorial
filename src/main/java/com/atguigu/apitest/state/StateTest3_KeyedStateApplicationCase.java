@@ -33,7 +33,7 @@ public class StateTest3_KeyedStateApplicationCase {
         env.setParallelism(1);
 
         // socket文本流
-        DataStream<String> inputStream = env.socketTextStream("localhost", 7777);
+        DataStream<String> inputStream = env.socketTextStream("ip248", 7777);
 
         // 转换成SensorReading类型
         DataStream<SensorReading> dataStream = inputStream.map(line -> {

@@ -31,14 +31,14 @@ public class Sink2Kafka {
         /**
          * 从kafka读取数据
          */
-        DataStream<String> inputStream = env.addSource(new FlinkKafkaConsumer011<String>("test", new SimpleStringSchema(), properties));
+        DataStream<String> inputStream = env.addSource(new FlinkKafkaConsumer011<String>("flink-a", new SimpleStringSchema(), properties));
 
         DataStream<String> dataStream = inputStream.map(line -> {
-            String[] split = line.split(" ");
+            String[] split = line.split(",");
             return new SensorReading(split[0], Long.valueOf(split[1]), Double.valueOf(split[2])).toString();
         });
 
-        dataStream.addSink(new FlinkKafkaProducer011<String>(servers, "sinktest", new SimpleStringSchema()));
+        dataStream.addSink(new FlinkKafkaProducer011<String>(servers, "flink-b", new SimpleStringSchema()));
         env.execute();
     }
 }

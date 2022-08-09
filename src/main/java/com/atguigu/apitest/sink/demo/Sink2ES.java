@@ -36,7 +36,7 @@ public class Sink2ES {
 
         //定义es的连接配置
         ArrayList<HttpHost> httpHosts = new ArrayList<>();
-        httpHosts.add(new HttpHost("", 9200));
+        httpHosts.add(new HttpHost("localhost", 9200));
 
         dataStream.addSink(new ElasticsearchSink.Builder<SensorReading>(httpHosts, new MyEsSinkFunction()).build());
 
@@ -56,7 +56,7 @@ public class Sink2ES {
             dataSource.put("ts", ele.getTimestamp().toString());
             dataSource.put("temp", ele.getTemperature().toString());
 
-            IndexRequest indexRequest = Requests.indexRequest().index("sensor").type("readingdata").source(dataSource);
+            IndexRequest indexRequest = Requests.indexRequest().index("sensor").type("_doc").source(dataSource);
 
             requestIndexer.add(indexRequest);
 
