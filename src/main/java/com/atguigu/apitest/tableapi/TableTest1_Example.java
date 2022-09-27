@@ -29,7 +29,7 @@ public class TableTest1_Example {
         env.setParallelism(1);
 
         // 1. 读取数据
-        DataStreamSource<String> inputStream = env.readTextFile("D:\\Projects\\BigData\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
+        DataStreamSource<String> inputStream = env.readTextFile("E:\\github\\FlinkTutorial\\src\\main\\resources\\sensor.txt");
 
         // 2. 转换成POJO
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
@@ -44,8 +44,8 @@ public class TableTest1_Example {
         Table dataTable = tableEnv.fromDataStream(dataStream);
 
         // 5. 调用table API进行转换操作
-        Table resultTable = dataTable.select("id, temperature")
-                .where("id = 'sensor_1'");
+        Table resultTable = dataTable.select("id, temperature");
+//                .where("id = 'sensor_1'");
 
         // 6. 执行SQL
         tableEnv.createTemporaryView("sensor", dataTable);
